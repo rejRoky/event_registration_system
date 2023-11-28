@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from .models import Event, Registration
 from .forms import EventForm
+from rest_framework import generics
+from .models import Event, Registration
+from .serializers import EventSerializer, RegistrationSerializer
 
 
 def event_list(request):
@@ -33,3 +35,25 @@ def search_events(request):
 def user_dashboard(request):
     registrations = Registration.objects.filter(user=request.user)
     return render(request, 'events/user_dashboard.html', {'registrations': registrations})
+
+
+class EventListAPIView(generics.ListAPIView):
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
+
+
+class EventDetailAPIView(generics.RetrieveAPIView):
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
+
+
+class RegistrationCreateAPIView(generics.CreateAPIView):
+    queryset = Registration.objects.all()
+    serializer_class = RegistrationSerializer
+
+
+class UserRegistrationsAPIView(generics.ListAPIView):
+    serializer_class = RegistrationSerializer
+
+    def get_queryset(self):
+        return Registration.objects.filter(user=self.request.user)
