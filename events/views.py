@@ -21,3 +21,15 @@ def register_for_event(request, event_id):
         Registration.objects.create(user=request.user, event=event)
         return redirect('event_detail', event_id=event_id)
     return render(request, 'events/register_for_event.html', {'event': event})
+
+
+def search_events(request):
+    query = request.GET.get('q')
+    events = Event.objects.filter(title__icontains=query)
+    return render(request, 'events/event_list.html', {'events': events})
+
+
+@login_required
+def user_dashboard(request):
+    registrations = Registration.objects.filter(user=request.user)
+    return render(request, 'events/user_dashboard.html', {'registrations': registrations})
