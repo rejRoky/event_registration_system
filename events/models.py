@@ -19,3 +19,17 @@ class Event(models.Model):
         verbose_name = 'Event'
         verbose_name_plural = 'Events'
         ordering = ['date', 'time']
+
+
+class Registration(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='registration')
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='registration')
+
+    def __str__(self):
+        return self.user.username + ' registered for ' + self.event.title + ' on ' + str(self.event.date)
+
+    class Meta:
+        verbose_name = 'Registration'
+        verbose_name_plural = 'Registrations'
+        unique_together = ('user', 'event')
+        ordering = ['event__date', 'event__time']
